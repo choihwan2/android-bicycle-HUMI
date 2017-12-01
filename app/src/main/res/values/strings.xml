@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Humi</string>
+    <string name="title_Navi">Navi</string>
+    <string name="title_Character">Character</string>
+    <string name="title_Health">Health</string>
+
+</resources>

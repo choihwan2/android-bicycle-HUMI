@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--android:icon="@drawable/ic_notifications_black_24dp"-->
+    <item
+        android:id="@+id/navigation_Chracter"
+        android:icon="@mipmap/character"
+        android:title="@string/title_Character" />
+
+    <item
+        android:id="@+id/navigation_Navi"
+        android:icon="@mipmap/navi"
+        android:title="@string/title_Navi" />
+
+
+
+    <item
+        android:id="@+id/navigation_Health"
+        android:icon="@mipmap/health"
+        android:title="@string/title_Health" />
+
+</menu>

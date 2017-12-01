@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:id="@+id/NaviLinearLayout"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:weightSum="1"
+    >
+
+    <LinearLayout
+        android:id="@+id/NaviTopLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight=".7"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/destLocation"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:ems="10"
+                android:hint="도착지를 입력하세요"
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/searchPath"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_rowSpan="2"
+                android:text="출발" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/naviFrameLayout_"
+            android:layout_width="match_parent"
+            android:layout_height="350dp">
+
+
+            <ListView
+                android:id="@+id/searchResultList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
+
+            <FrameLayout
+                android:id="@+id/naviFrameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/TrackingFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:background="#00ff0000"
+                app:backgroundTint="#00ff0000"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@mipmap/fab" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_weight=".3"
+        android:columnCount="6"
+        android:orientation="horizontal"
+        android:rowCount="4"
+        android:textAlignment="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:text="Vest LED"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_columnSpan="1"
+            android:layout_row="0"
+            android:text="Dis."
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_row="0"
+            android:text="Timeleft"
+            android:textSize="20sp" />
+
+
+        <ImageView
+            android:id="@+id/ledImageViewer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="1"
+            android:layout_rowSpan="3"
+            android:minHeight="100dp"
+            android:minWidth="100dp" />
+
+        <TextView
+            android:id="@+id/disValue"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="1"
+            android:text="0.0"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_marginRight="10dp"
+            android:layout_row="1"
+            android:keepScreenOn="false"
+            android:text="km/h"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/timeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_row="1"
+            android:text="00:00"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+        <!--주행시간!-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_columnSpan="1"
+            android:layout_row="2"
+            android:text="Avg. S"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_columnSpan="2"
+            android:layout_row="2"
+            android:text="Cur. S"
+            android:textSize="20sp" />
+        <!--평균속력!-->
+        <TextView
+            android:id="@+id/avgValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="3"
+            android:text="0.0"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_row="3"
+            android:text="km/h"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+        <!--현재속력!-->
+        <TextView
+            android:id="@+id/speedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_row="3"
+            android:text="0.0"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="4"
+            android:layout_row="3"
+            android:text="km/h"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+
+    </GridLayout>
+
+
+</LinearLayout>
