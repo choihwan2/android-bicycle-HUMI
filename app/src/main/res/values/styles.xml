@@ -20,4 +20,15 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="colorControlActivated">@color/black_overlay</item>
+        <item name="android:textCursorDrawable">@color/black_overlay</item>
+    </style>
+
+    <style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/black_overlay</item>
+        <item name="colorControlActivated">@color/black_overlay</item>
+        <item name="android:textCursorDrawable">@color/black_overlay</item>
+    </style>
+
 </resources>

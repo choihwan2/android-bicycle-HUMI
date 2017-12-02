@@ -4,4 +4,12 @@
     <string name="title_Character">Character</string>
     <string name="title_Health">Health</string>
 
+
+    <string name="lv1_Intro">레벨1 텍스트입니다.\n레벨1 텍스트입니다.</string>
+    <string name="lv2_Intro">레벨2 텍스트입니다.\n레벨2 텍스트입니다.</string>
+    <string name="lv3_Intro">레벨3 텍스트입니다.\n레벨3 텍스트입니다.</string>
+    <string name="lv4_Intro">레벨4 텍스트입니다.\n레벨4 텍스트입니다.</string>
+    <string name="lv5_Intro">레벨5 텍스트입니다.\n레벨5 텍스트입니다.</string>
+
+    <string name="facebook_app_id">309370176247157</string>
 </resources>

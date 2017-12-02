@@ -8,4 +8,7 @@
 
     <color name="light_gray">#f2f2f2</color>
     <color name="Default_textColor">#95989a</color>
+
+    <color name="google_back">#FAFAFA</color>
+    <color name="facebook_back">#283593</color>
 </resources>

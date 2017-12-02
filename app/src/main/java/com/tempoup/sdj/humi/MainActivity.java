@@ -113,7 +113,10 @@ public class MainActivity extends AppCompatActivity{
 
                     Singleton.getInstance().setCurTime(System.currentTimeMillis());
                     if( m_FragIndex == 1 ){
-                        m_NaviFrag.getTickCountTimeLeft();
+                        if( m_NaviFrag != null ){
+                            m_NaviFrag.getTickCountTimeLeft();
+                        }
+
                     }
                 }
 
@@ -124,12 +127,20 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if ( m_NaviFrag.getTmapView().getVisibility() == View.INVISIBLE ){
-            m_NaviFrag.HideListview();
+        if( m_NaviFrag != null && m_NaviFrag.getTmapView() != null ){
+            if ( m_NaviFrag.getTmapView().getVisibility() == View.INVISIBLE ){
+                m_NaviFrag.HideListview();
+            }
+            else{
+                m_CharFrag.setAniThreadRun(false);
+                super.onBackPressed();
+            }
         }
         else{
+            m_CharFrag.setAniThreadRun(false);
             super.onBackPressed();
         }
+
 
     }
 

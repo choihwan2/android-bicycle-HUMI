@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "713984500280",
+    "firebase_url": "https://humi-3bd2d.firebaseio.com",
+    "project_id": "humi-3bd2d",
+    "storage_bucket": "humi-3bd2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713984500280:android:db9f33047e8f6a42",
+        "android_client_info": {
+          "package_name": "com.tempoup.sdj.humi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713984500280-1c9s4lqcrj73rlcp16eg59bcu0qjsrdq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL8AoEuzWTbar49oTTy_-T-dMvIltPuXc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -90,8 +90,9 @@ import io.realm.RealmResults;
 public class NaviFragment extends Fragment implements LocationListener {
     //Bluetooth connection
     static final int REQUEST_ENABLE_BT = 10;
-    static final int D_LEDSTATE_LEFT = 1;
-    static final int D_LEDSTATE_RIGHT = 2;
+    static final int D_LEDSTATE_LEFT = 0;
+    static final int D_LEDSTATE_RIGHT = 1;
+    static final int D_LEDSTATE_RUN = 2;
     static final int D_LEDSTATE_EMER = 3;
 
     private Realm m_Realm;
@@ -142,6 +143,8 @@ public class NaviFragment extends Fragment implements LocationListener {
 
     private boolean m_bIsInPoint;
 
+    private int m_nbtRead;
+
     public NaviFragment() {
         m_Realm = null;
         m_mPairedDeviceCount = 0;
@@ -176,6 +179,8 @@ public class NaviFragment extends Fragment implements LocationListener {
 
         m_nPivotPathPoint = 0;
         m_bIsInPoint = false;
+
+        m_nbtRead = -1;
         // Required empty public constructor
     }
     public void btConnection(){
@@ -259,9 +264,9 @@ public class NaviFragment extends Fragment implements LocationListener {
 
         });
 
-        //builder.setCancelable(false);  // 뒤로 가기 버튼 사용 금지.
-        //AlertDialog alert = builder.create();
-        //alert.show();
+        builder.setCancelable(false);  // 뒤로 가기 버튼 사용 금지.
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     //  connectToSelectedDevice() : 원격 장치와 연결하는 과정을 나타냄.
@@ -327,54 +332,30 @@ public class NaviFragment extends Fragment implements LocationListener {
                 // interrupt() 메소드는 하던 일을 멈추는 메소드이다.
                 // isInterrupted() 메소드를 사용하여 멈추었을 경우 반복문을 나가서 스레드가 종료하게 된다.
                 while(!Thread.currentThread().isInterrupted()) {
+                    //Log.d("debug", "BluetoothThread!");
                     try {
                         // InputStream.available() : 다른 스레드에서 blocking 하기 전까지 읽은 수 있는 문자열 개수를 반환함.
                         int byteAvailable = m_InputStream.available();   // 수신 데이터 확인
+                        //Log.d("debug", "Available : " + String.valueOf(byteAvailable));
                         if(byteAvailable > 0) {                        // 데이터가 수신된 경우.
-                            byte[] packetBytes = new byte[byteAvailable];
+
+                            byte[] packetBytes = new byte[4];//new byte[byteAvailable];
                             // read(buf[]) : 입력스트림에서 buf[] 크기만큼 읽어서 저장 없을 경우에 -1 리턴.
-                            m_InputStream.read(packetBytes);
-                            for(int i=0; i<byteAvailable; i++) {
-                                byte b = packetBytes[i];
-                                if(b == m_CharDelimiter) {
-                                    byte[] encodedBytes = new byte[m_nReadBufferPosition];
-                                    //  System.arraycopy(복사할 배열, 복사시작점, 복사된 배열, 붙이기 시작점, 복사할 개수)
-                                    //  readBuffer 배열을 처음 부터 끝까지 encodedBytes 배열로 복사.
-                                    System.arraycopy(m_ReadBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                            m_nbtRead = m_InputStream.read();
+                            setChangeVestLED(m_nbtRead);
+                            validationVestSignal(m_nbtRead);
 
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    m_nReadBufferPosition = 0;
-
-                                    handler.post(new Runnable(){
-                                        // 수신된 문자열 데이터에 대한 처리.
-                                        @Override
-                                        public void run() {
-                                            // mStrDelimiter = '\n';
-                                            String signal = data+m_StrDelimiter;
-                                            setChangeVestLED(Integer.parseInt(signal));
-
-                                            validationVestSignal(m_bIsInPoint, signal);
-                                            Toast.makeText(getActivity(), signal, Toast.LENGTH_LONG).show();
-                                            //setChangeVestLED();
-                                            //mEditReceive.setText(mEditReceive.getText().toString() + data+ mStrDelimiter);
-                                        }
-
-                                    });
-                                }
-                                else {
-                                    m_ReadBuffer[m_nReadBufferPosition++] = b;
-                                }
-                            }
+                            Log.d("debug", "packetBytes : " + m_nbtRead);
                         }
 
                     } catch (Exception e) {    // 데이터 수신 중 오류 발생.
-                        Toast.makeText(getActivity(), "데이터 수신 중 오류가 발생 했습니다.", Toast.LENGTH_LONG).show();
-                        getActivity().finish();            // App 종료.
+                        e.printStackTrace();
                     }
                 }
             }
 
         });
+        m_WorkerThread.start();
     }
 
     public void TMapInit() {
@@ -432,20 +413,7 @@ public class NaviFragment extends Fragment implements LocationListener {
                     NodeList nodeListPlacemarkItem = nodeListPlacemark.item(i).getChildNodes();
                     for( int j=0; j<nodeListPlacemarkItem.getLength(); j++ ) {
                         if( nodeListPlacemarkItem.item(j).getNodeName().equals("description") ) {
-                            Log.d("debug", nodeListPlacemarkItem.item(j).getTextContent().trim() );
                         }
-//                        if( nodeListPlacemarkItem.item(j).getNodeName().equals("tmap:nodeType") )
-//                        {
-//                            Log.d("debug", "nodeType!" );
-//                            if( nodeListPlacemarkItem.item(j).getTextContent().trim().equals("POINT") ){
-//                                IsbPointType = true;
-//                                Log.d("debug", "nodeType : POINT!" );
-//                            }
-//                            else{
-//                                IsbPointType = false;
-//                                Log.d("debug", "nodeType : NOT POINT!" );
-//                            }
-//                        }
                         if( nodeListPlacemarkItem.item(j).getNodeName().equals("Point") ){
                             String[] coord;
                             coord = nodeListPlacemarkItem.item(j).getTextContent().trim().split(",");
@@ -537,6 +505,10 @@ public class NaviFragment extends Fragment implements LocationListener {
                 m_ledImageViewer.setImageResource(R.mipmap.l);
                 break;
 
+            case D_LEDSTATE_RUN:
+                m_ledImageViewer.setImageResource(R.mipmap.e);
+                break;
+
             case D_LEDSTATE_RIGHT:
                 m_ledImageViewer.setImageResource(R.mipmap.r);
                 break;
@@ -581,16 +553,6 @@ public class NaviFragment extends Fragment implements LocationListener {
 
 
         View view = inflater.inflate(R.layout.fragment_navi, container, false);
-
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-//                    Toast.makeText(getActivity(), "you just touch the screen :-)", Toast.LENGTH_SHORT).show();
-//                }
-//                return true;
-//            }
-//        });
 
         //레아아웃 아이디 연결
         LinearLayout NaviLinearLayout = (LinearLayout) view.findViewById(R.id.NaviTopLinearLayout);
@@ -642,7 +604,7 @@ public class NaviFragment extends Fragment implements LocationListener {
 
         Singleton.getInstance().setInitialize(System.currentTimeMillis());
 
-        //btConnection();
+
 
 
         //트래킹 버튼 터치
@@ -675,12 +637,8 @@ public class NaviFragment extends Fragment implements LocationListener {
                     return;
                 }
 
-
                 TMapPoint point = (TMapPoint) m_poiResultPoint.get(m_nSelectedInd);
-
                 drawMapPath(point.getLatitude(), point.getLongitude());
-
-
             }
         });
 
@@ -792,22 +750,45 @@ public class NaviFragment extends Fragment implements LocationListener {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                m_timeText.setText(m_timeLeft);
-                m_avgText.setText(String.valueOf(m_avgSpeed));
+                if( m_timeLeft != null && m_avgText != null ){
+                    m_timeText.setText(m_timeLeft);
+                    m_avgText.setText(String.valueOf(m_avgSpeed));
+                }
+
             }
         });
 
     }
 
-    public void validationVestSignal(boolean bIsInPoint, String sBtSignal){
+    public void validationVestSignal(int nBtSignal){
         if( m_bIsInPoint ){
             //좌회전 해야하는 상황에서 좌회전을 켰음
-            if( sBtSignal.equals(String.valueOf(D_LEDSTATE_LEFT)) && m_pathDirDataList.get(m_nPivotPathPoint).equals("12") ){
+            if( nBtSignal == D_LEDSTATE_LEFT && m_pathDirDataList.get(m_nPivotPathPoint).equals("12") ){
+                m_nPivotPathPoint++;
+                m_bIsInPoint = false;
 
+                m_Realm.beginTransaction();
+
+                RealmQuery<User> query = m_Realm.where(User.class);
+                RealmResults<User> result = query.findAll();
+                User user = result.first();
+                user.addExp(10);
+
+                m_Realm.commitTransaction();
             }
-            //우회전 해야하는 상황에서 좌회전을 켰음
-            if( sBtSignal.equals(String.valueOf(D_LEDSTATE_RIGHT)) && m_pathDirDataList.get(m_nPivotPathPoint).equals("13") ){
+            //우회전 해야하는 상황에서 우회전을 켰음
+            if( nBtSignal == D_LEDSTATE_RIGHT && m_pathDirDataList.get(m_nPivotPathPoint).equals("13") ){
+                m_nPivotPathPoint++;
+                m_bIsInPoint = false;
 
+                m_Realm.beginTransaction();
+
+                RealmQuery<User> query = m_Realm.where(User.class);
+                RealmResults<User> result = query.findAll();
+                User user = result.first();
+                user.addExp(10);
+
+                m_Realm.commitTransaction();
             }
         }
     }

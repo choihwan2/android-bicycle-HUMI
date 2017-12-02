@@ -41,7 +41,7 @@ public class IntroActivity extends AppCompatActivity {
     private final Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
-            Intent intent=new Intent(IntroActivity.this, MainActivity.class);
+            Intent intent=new Intent(IntroActivity.this, AuthActivity.class);
             startActivity(intent);
             finish();
         }

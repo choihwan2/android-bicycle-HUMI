@@ -33,5 +33,13 @@ dependencies {
     compile files('libs/com.skp.Tmap_1.0.49.jar')
     implementation 'com.android.support:gridlayout-v7:26.1.0'
     compileOnly files('libs/hzgraperlibrary_v1.0.0.jar')
-    apply plugin: 'realm-android'
+
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.18.0'
 }
+
+apply plugin: 'realm-android'
+apply plugin: 'com.google.gms.google-services'
+
+
