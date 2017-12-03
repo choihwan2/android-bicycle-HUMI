@@ -506,7 +506,7 @@ public class NaviFragment extends Fragment implements LocationListener {
                 break;
 
             case D_LEDSTATE_RUN:
-                m_ledImageViewer.setImageResource(R.mipmap.e);
+                m_ledImageViewer.setImageResource(R.mipmap.running);
                 break;
 
             case D_LEDSTATE_RIGHT:

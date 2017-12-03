@@ -5,11 +5,11 @@
     <string name="title_Health">Health</string>
 
 
-    <string name="lv1_Intro">레벨1 텍스트입니다.\n레벨1 텍스트입니다.</string>
-    <string name="lv2_Intro">레벨2 텍스트입니다.\n레벨2 텍스트입니다.</string>
-    <string name="lv3_Intro">레벨3 텍스트입니다.\n레벨3 텍스트입니다.</string>
-    <string name="lv4_Intro">레벨4 텍스트입니다.\n레벨4 텍스트입니다.</string>
-    <string name="lv5_Intro">레벨5 텍스트입니다.\n레벨5 텍스트입니다.</string>
+    <string name="lv1_Intro">농민\n소도시만 주행할 수 있습니다.</string>
+    <string name="lv2_Intro">양반\n중도시 주행할 수 있습니다.</string>
+    <string name="lv3_Intro">참판\n대도시를 주행할 수 있습니다.</string>
+    <string name="lv4_Intro">영의정\n이제 서울도시 전체를 누빌 수 있습니다.</string>
+    <string name="lv5_Intro">왕\n이제 전세계를 누빌 수 있는 실력입니다.</string>
 
     <string name="facebook_app_id">309370176247157</string>
 </resources>

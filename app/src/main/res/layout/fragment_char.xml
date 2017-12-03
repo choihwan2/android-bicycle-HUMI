@@ -63,9 +63,14 @@
         android:progress="0"/>
 
     <FrameLayout
+        android:id="@+id/CharFrame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@mipmap/charback">
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/CharBkgImgView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
         <ImageView
             android:id="@+id/CharImgView"
             android:layout_width="match_parent"
@@ -78,7 +83,7 @@
             android:id="@+id/charLeft"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@mipmap/fab"
+            android:src="@mipmap/char_l"
             android:clickable="true"
             android:layout_gravity="left | center_vertical"
             />
@@ -87,7 +92,7 @@
             android:id="@+id/charRight"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@mipmap/fab"
+            android:src="@mipmap/char_r"
             android:clickable="true"
             android:layout_gravity="right | center_vertical"
             />
@@ -102,9 +107,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="134dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/rankRidersBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="안전 라이더 명예의 전당"
+            />
 
     </LinearLayout>
     <!--

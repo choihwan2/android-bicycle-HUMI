@@ -1,12 +1,14 @@
 package com.tempoup.sdj.humi;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,15 +17,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.InterruptedIOException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -37,7 +45,10 @@ public class CharFragment extends Fragment {
 
     private Realm m_Realm;
 
+    private FrameLayout m_charFrameLay;
     private ImageView m_charImgView;
+    private ImageView m_charbkgImgView;
+    private ImageView m_progressdIcon;
     private ProgressBar m_expBar;
     private TextView m_levelText;
     private TextView m_levelClassText;
@@ -46,6 +57,10 @@ public class CharFragment extends Fragment {
     private ImageView m_charLeft;
     private ImageView m_charRight;
     private TextView m_userNameText;
+    private ListView m_rankResultListView;
+    private ListviewAdapter m_rankResultAdapter;
+    private ArrayList<RankListViewItem> m_rankResultListItem;
+
 
     private int m_nLevel;
     private int m_nExp;
@@ -117,6 +132,10 @@ public class CharFragment extends Fragment {
 
         m_nAniThreadRun = true;
         m_sUserName = null;
+
+        m_rankResultListView = null;
+        m_rankResultAdapter = null;
+        m_rankResultListItem = null;
     }
 
     public void setAniThreadRun(boolean run){
@@ -138,6 +157,10 @@ public class CharFragment extends Fragment {
         m_charLeft = (ImageView) view.findViewById(R.id.charLeft);
         m_charRight = (ImageView) view.findViewById(R.id.charRight);
         m_userNameText = (TextView) view.findViewById(R.id.userNameText);
+        Button rankRidersBtn = (Button) view.findViewById(R.id.rankRidersBtn);
+        m_charFrameLay = (FrameLayout) view.findViewById(R.id.CharFrame);
+        m_charbkgImgView = (ImageView) view.findViewById(R.id.CharBkgImgView);
+        m_progressdIcon = (ImageView) view.findViewById(R.id.progressIcon);
 
         m_charLeft.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -149,6 +172,12 @@ public class CharFragment extends Fragment {
                 showHigherLevelChar();
             }
         });
+        rankRidersBtn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                showRank();
+            }
+        });
+
 
         Singleton.getInstance().openRealm(getActivity());
         m_Realm = Singleton.getInstance().getRealm();
@@ -195,11 +224,11 @@ public class CharFragment extends Fragment {
         setChangeText(String.valueOf(m_nLevel));
         setChangeExp(exp);
         setChangeLevelText(m_nLevel);
+        setChangeCharacterBack(m_nLevel);
+        setChangeProgressIcon(m_nLevel);
+
 
         m_sUserName = new String();
-
-
-
 
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable()
@@ -228,12 +257,69 @@ public class CharFragment extends Fragment {
 
         return view;
     }
+    void setListRank(){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        RankListViewItem item1 = new RankListViewItem(R.mipmap.lv5_head, "조성동 Exp:420");
+        RankListViewItem item2 = new RankListViewItem(R.mipmap.lv3_head, "최환 Exp:230");
+        RankListViewItem item3 = new RankListViewItem(R.mipmap.lv2_head, "강효빈 Exp:120");
+        RankListViewItem item4 = new RankListViewItem(R.mipmap.lv1_head, "이은진 Exp:10");
+
+        m_rankResultListItem.add(item1);
+        m_rankResultListItem.add(item2);
+        m_rankResultListItem.add(item3);
+        m_rankResultListItem.add(item4);
+    }
+
+    void showRank()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_rank, null);
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+
+        Button rankCloseBtn = (Button) view.findViewById(R.id.rankCloseBtn);
+        m_rankResultListView = (ListView) view.findViewById(R.id.rankResultList);
+
+        m_rankResultListItem = new ArrayList<RankListViewItem>();
+
+        setListRank();
+
+        m_rankResultAdapter =new ListviewAdapter(getActivity(), R.layout.listitem_rankitem,m_rankResultListItem);
+        m_rankResultListView.setAdapter(m_rankResultAdapter);
+
+        m_rankResultAdapter.notifyDataSetChanged();
+
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if( m_timeLeft != null && m_avgText != null ){
+//
+//
+//            }
+//        });
+
+        rankCloseBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
 
     public void showLowerLevelChar(){
         if( m_nLevelPivot <= 1 ) { return; }
         m_nLevelPivot--;
         setChangeCharacter(m_nLevelPivot, m_nCharFrame);
         setChangeText(String.valueOf(m_nLevelPivot));
+        setChangeCharacterBack(m_nLevelPivot);
+        setChangeLevelText(m_nLevelPivot);
         ApeearMoveAnimate();
     }
 
@@ -242,6 +328,8 @@ public class CharFragment extends Fragment {
         m_nLevelPivot++;
         setChangeCharacter(m_nLevelPivot, m_nCharFrame);
         setChangeText(String.valueOf(m_nLevelPivot));
+        setChangeCharacterBack(m_nLevelPivot);
+        setChangeLevelText(m_nLevelPivot);
         ApeearMoveAnimate();
     }
 
@@ -336,13 +424,35 @@ public class CharFragment extends Fragment {
             m_charImgView.setColorFilter(null);
         }
 
-
-
-
-
         m_charImgView.setImageResource(id);
+
+
 
         //id = res.getIdentifier("lv" + String.valueOf(level) + "_" + String.valueOf(frame) + "_pgicon", "mipmap", getActivity().getPackageName());
         //m_progressIcon.setImageResource(id);
+    }
+    public void setChangeProgressIcon(int level) {
+        //progressIcon
+        Resources res = getActivity().getResources();
+        int id = res.getIdentifier("lv" + String.valueOf(level) + "_head", "mipmap", getActivity().getPackageName());
+        m_progressdIcon.setImageResource(id);
+    }
+    public void setChangeCharacterBack(int level) {
+        Resources res = getActivity().getResources();
+        int id = res.getIdentifier("lv" + String.valueOf(level) + "_back", "mipmap", getActivity().getPackageName());
+        ColorMatrix matrix = new ColorMatrix();
+
+        if( m_nLevel < level ){
+            // 흑백 처리
+            matrix.setSaturation(0);
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+            m_charbkgImgView.setColorFilter(filter);
+        }else{
+            m_charbkgImgView.setColorFilter(null);
+        }
+
+
+        m_charbkgImgView.setImageResource(id);
+
     }
 }
