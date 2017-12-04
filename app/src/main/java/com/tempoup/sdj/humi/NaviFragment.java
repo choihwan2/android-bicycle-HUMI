@@ -126,8 +126,12 @@ public class NaviFragment extends Fragment implements LocationListener {
     private TMapPoint m_startGPSPt;
     private TMapPoint m_destGPSPt;
 
+    private float m_curSpeed;
+    private float m_curDistance;
+
     private String m_timeLeft;
     private float m_avgSpeed;
+    private float m_fdistance;
 
     private ArrayAdapter<String> m_poiResultAdapter;
     private ArrayList<String> m_poiResultListItem;
@@ -180,7 +184,11 @@ public class NaviFragment extends Fragment implements LocationListener {
         m_nPivotPathPoint = 0;
         m_bIsInPoint = false;
 
+        m_curSpeed = 0.0f;
+        m_curDistance = 0.0f;
+
         m_nbtRead = -1;
+        m_fdistance = 0.0f;
         // Required empty public constructor
     }
     public void btConnection(){
@@ -381,10 +389,10 @@ public class NaviFragment extends Fragment implements LocationListener {
         m_tMapGPS.setMinDistance(5);
 
         //와이파이 및 네트워크
-        m_tMapGPS.setProvider(m_tMapGPS.NETWORK_PROVIDER);
+        //m_tMapGPS.setProvider(m_tMapGPS.NETWORK_PROVIDER);
 
         //위성
-        //m_tMapGPS.setProvider(m_tMapGPS.GPS_PROVIDER);
+        m_tMapGPS.setProvider(m_tMapGPS.GPS_PROVIDER);
 
         m_tMapGPS.OpenGps();
 
@@ -539,6 +547,14 @@ public class NaviFragment extends Fragment implements LocationListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
+
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                1);
+
         //권한 확인 후 요청
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -577,16 +593,19 @@ public class NaviFragment extends Fragment implements LocationListener {
         TMapInit();
 
         //AVD test code
-        m_tMapView.setCenterPoint(127.073139, 37.550260);
-        m_tMapView.setLocationPoint(127.073139, 37.550260);
+        //m_tMapView.setCenterPoint(127.073139, 37.550260);
+        //m_tMapView.setLocationPoint(127.073139, 37.550260);
 
         //m_naviTmapView = Singleton.getInstance().getTmapView();
         //m_naviTmapView.invalidate();
 
         m_locationMgr = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        m_locationMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                100,
-                5, this);
+        //GPS_PROVIDER , NETWORK_PROVIDER
+
+        m_locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 400, 1, this);
+//        m_locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                100,
+//                5, this);
 
         NaviFrameLayout.addView(m_tMapView);
 
@@ -624,15 +643,15 @@ public class NaviFragment extends Fragment implements LocationListener {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                m_Realm.beginTransaction();
-
-                RealmQuery<User> query = m_Realm.where(User.class);
-                RealmResults<User> result = query.findAll();
-                User user = result.first();
-                user.addExp(10);
-
-                m_Realm.commitTransaction();
-
+//                m_Realm.beginTransaction();
+//
+//                RealmQuery<User> query = m_Realm.where(User.class);
+//                RealmResults<User> result = query.findAll();
+//                User user = result.first();
+//                user.addExp(10);
+//
+//                m_Realm.commitTransaction();
+                btConnection();
                 if (m_nSelectedInd == -1) {
                     return;
                 }
@@ -744,6 +763,8 @@ public class NaviFragment extends Fragment implements LocationListener {
 
 
         Singleton.getInstance().addTotalSpeed(Float.parseFloat(m_speedText.getText().toString()));
+
+
         m_avgSpeed = Singleton.getInstance().getavgpeed();
 
 
@@ -752,7 +773,9 @@ public class NaviFragment extends Fragment implements LocationListener {
             public void run() {
                 if( m_timeLeft != null && m_avgText != null ){
                     m_timeText.setText(m_timeLeft);
-                    m_avgText.setText(String.valueOf(m_avgSpeed));
+                    float spd =m_avgSpeed;
+                    spd = Float.parseFloat(String.format("%.1f",m_avgSpeed));
+                    m_avgText.setText(String.valueOf(spd));
                 }
 
             }
@@ -843,9 +866,35 @@ public class NaviFragment extends Fragment implements LocationListener {
         destLoc.setLatitude(location.getLatitude());
         destLoc.setLongitude(location.getLongitude());
 
-        m_speedText.setText(String.valueOf(location.getSpeed(       )));
-        Log.d("debug", "Speed" + String.valueOf(location.getSpeed()));
-        m_disText.setText(String.valueOf(startLoc.distanceTo(destLoc)));
+        //float spd =0.41412f;
+        m_curSpeed = Float.parseFloat(String.format("%.1f",location.getSpeed()));
+        m_curDistance = Float.parseFloat(String.format("%.1f", startLoc.distanceTo(destLoc)));
+
+        //m_curDistance =
+        Log.d("debug", "start" + startLoc.toString());
+        Log.d("debug", "dest" + destLoc.toString());
+
+        m_fdistance += m_curSpeed * 3600;
+//        if( m_fdistance >= 0.0)
+//        m_curDistance = Float.parseFloat(String.format("%.1f", m_fdistance));
+
+        int a = 1;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_speedText.setText(String.valueOf(m_curSpeed));
+                Log.d("debug", "Speed" + m_curSpeed);
+                m_disText.setText(String.valueOf(m_curDistance));
+                Log.d("debug", "Dis" + m_curDistance);
+
+            }
+        });
+
+
+//        m_speedText.setText(String.valueOf(spd));
+//        Log.d("debug", "Speed" + spd);
+//        m_disText.setText(String.valueOf(dis));
+//        Log.d("debug", "Dis" + dis);
 
         checkCurPoint();
     }
