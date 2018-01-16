@@ -1,5 +1,5 @@
 # BikeApp_HUMI
-ES엔터테인먼트SW미디어프로젝트 - HUMI Android App
+ES엔터테인먼트SW미디어프로젝트 - HUMI Android App (4인 / 앱 개발 담당)
 
 ![main](promotion.jpg "promotion")
 
